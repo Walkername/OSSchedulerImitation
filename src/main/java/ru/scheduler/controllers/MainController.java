@@ -1,31 +1,21 @@
 package ru.scheduler.controllers;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import ru.scheduler.models.OperationSystem;
+import ru.scheduler.models.Task;
 import ru.scheduler.enums.Priority;
 import ru.scheduler.enums.State;
 import ru.scheduler.enums.TaskType;
-import ru.scheduler.models.OperationSystem;
-import ru.scheduler.models.Task;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
-import java.util.concurrent.ExecutionException;
 
 public class MainController {
 

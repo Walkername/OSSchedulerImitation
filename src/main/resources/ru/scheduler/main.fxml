@@ -103,11 +103,11 @@
                     <Text fx:id="waitingSecond" text="No tasks"/>
                 </HBox>
                 <HBox alignment="CENTER_LEFT">
-                    <Text text="Third: "/>
+                    <Text text="First: "/>
                     <Text fx:id="waitingFirst" text="No tasks"/>
                 </HBox>
                 <HBox alignment="CENTER_LEFT">
-                    <Text text="First: "/>
+                    <Text text="Zero: "/>
                     <Text fx:id="waitingZero" text="No tasks"/>
                 </HBox>
             </VBox>

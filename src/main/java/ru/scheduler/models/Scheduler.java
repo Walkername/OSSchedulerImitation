@@ -5,7 +5,6 @@ import ru.scheduler.enums.State;
 import ru.scheduler.enums.TaskType;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class Scheduler {
 

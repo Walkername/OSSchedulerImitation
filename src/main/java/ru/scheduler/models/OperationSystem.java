@@ -1,7 +1,7 @@
 package ru.scheduler.models;
 
-import ru.scheduler.enums.Priority;
 import ru.scheduler.generator.TaskGenerator;
+import ru.scheduler.enums.Priority;
 
 import java.util.Map;
 import java.util.Queue;

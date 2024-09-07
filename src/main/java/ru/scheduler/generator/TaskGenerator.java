@@ -1,9 +1,9 @@
 package ru.scheduler.generator;
 
+import ru.scheduler.models.Scheduler;
 import ru.scheduler.enums.Priority;
 import ru.scheduler.enums.State;
 import ru.scheduler.enums.TaskType;
-import ru.scheduler.models.Scheduler;
 import ru.scheduler.models.Task;
 
 import java.util.Random;

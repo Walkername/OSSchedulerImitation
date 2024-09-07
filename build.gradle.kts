@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.provider.gradleKotlinDslJarsOf
 
 plugins {
     id("java")
@@ -10,7 +11,13 @@ javafx {
     modules("javafx.controls", "javafx.fxml", "javafx.graphics")
 }
 
-group = "org.example"
+tasks.withType<Jar> {
+    manifest {
+        attributes["Main-Class"] = "ru.scheduler.App"
+    }
+}
+
+group = "ru.scheduler"
 version = "1.0-SNAPSHOT"
 
 repositories {
