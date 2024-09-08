@@ -5,6 +5,7 @@ import ru.scheduler.enums.Priority;
 
 import java.util.Map;
 import java.util.Queue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class OperationSystem {
 
@@ -39,5 +40,9 @@ public class OperationSystem {
 
     public void addCustomTask(Task task) {
         scheduler.getReadyTasks().get(task.getPriority()).add(task);
+    }
+
+    public AtomicInteger getProcessorTimer() {
+        return processor.getTimeToFinish();
     }
 }

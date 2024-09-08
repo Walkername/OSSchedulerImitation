@@ -78,6 +78,14 @@ public class Task {
                 '}';
     }
 
+    public String getDescription() {
+        return this.name + "\n"
+                + this.type + "\n"
+                + this.state + "\n"
+                + this.priority + "\n"
+                + this.duration;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -22,7 +22,7 @@ public class Main extends Application {
         stage.setTitle("OS Scheduler Imitation");
         stage.setResizable(false);
         stage.setWidth(800);
-        stage.setHeight(600);
+        stage.setHeight(650);
         stage.setMinWidth(500);
         stage.setMinHeight(200);
         stage.show();

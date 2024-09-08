@@ -6,14 +6,37 @@ import ru.scheduler.enums.State;
 import ru.scheduler.enums.TaskType;
 import ru.scheduler.models.Task;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 public class TaskGenerator {
 
     private final Scheduler scheduler;
 
     private final Random random = new Random();
-    private final int MAX_TASK_DURATION = 5;
+    private final int MAX_TASK_DURATION = 6;
+
+    private final Set<String> taskTitles = new HashSet<>(
+            Arrays.asList(
+                    "Calc", "The Witcher", "SCII", "Intellij IDEA",
+                    "Battle.net", "Steam", "Epic Games", "WordPad",
+                    "Nioh", "Dark Souls", "Chrome", "Yandex",
+                    "Telegram", "Discord", "Photoshop", "Adobe Premier",
+                    "PostgreSQL", "Notion", "Obsidian", "Git", "FarCry",
+                    "Diablo", "Minecraft", "Overwatch", "Warcraft",
+                    "Half-Life", "Quake", "Doom", "BioShock",
+                    "Zelda", "God of War", "Fortnite", "Office",
+                    "sys32", "java", "MATLAB", "Maple", "JAWS",
+                    "Visual Studio", "python", "gcc", "g++",
+                    "C#", "Javascript", "Typescript", "Bonjour",
+                    "jtagserver", "Lightshot", "Alan Wake", "Starfield",
+                    "Fallout", "Skyrim", "Baldur's Gate", "Cyberpunk",
+                    "Lies of P", "Dark Souls", "Elden Ring", "Sekiro",
+                    "Halo", "Dying Light", "Bloodborne", "Undertale"
+            )
+    );
 
     public TaskGenerator(Scheduler scheduler) {
         this.scheduler = scheduler;
@@ -43,10 +66,10 @@ public class TaskGenerator {
     }
 
     private Task generateTask(int tasksNumber) {
-        String name = String.valueOf(random.nextInt(tasksNumber));
+        String name = getRandomArrayElement(taskTitles.toArray(new String[0]));
         TaskType type = getRandomArrayElement(TaskType.values());
         Priority priority = getRandomArrayElement(Priority.values());
-        int duration = random.nextInt(1, MAX_TASK_DURATION);
+        int duration = random.nextInt(3, MAX_TASK_DURATION);
 
         return new Task(name, type, State.READY, priority, duration);
     }

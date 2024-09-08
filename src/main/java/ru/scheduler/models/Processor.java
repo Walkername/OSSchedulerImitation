@@ -9,6 +9,7 @@ public class Processor {
 
     private Task executionTask;
     private Thread executionThread;
+    private AtomicInteger timeToFinish;
 
     public void executeTask(Task task, int interval) {
         executionThread = new Thread(() -> execute(task, interval));
@@ -19,7 +20,7 @@ public class Processor {
     public void execute(Task task, int interval) {
         executionTask = task;
         AtomicInteger initialDuration = new AtomicInteger(task.getDuration().get());
-        AtomicInteger timeToFinish = new AtomicInteger(task.getDuration().get());
+        timeToFinish = new AtomicInteger(task.getDuration().get());
         task.setState(State.RUNNING);
         while (timeToFinish.get() != 0) {
             try {
@@ -27,13 +28,13 @@ public class Processor {
             } catch (InterruptedException e) {
                 break;
             }
-            if (task.getType() == TaskType.EXTENDED) {
-                task.getDuration().decrementAndGet();
-            }
+            //if (task.getType() == TaskType.EXTENDED) {
+            //    task.getDuration().decrementAndGet();
+            //}
             timeToFinish.decrementAndGet();
         }
         executionTask.setState(State.SUSPENDED);
-        executionTask.setDuration(initialDuration);
+        //executionTask.setDuration(initialDuration);
         printProcessingState("Задача " + executionTask + " выполнена", interval);
         //System.out.println("Задача " + executionTask + " выполнена");
     }
@@ -51,6 +52,10 @@ public class Processor {
     }
 
     public Task getExecutionTask() {
-        return executionTask;
+        return this.executionTask;
+    }
+
+    public AtomicInteger getTimeToFinish() {
+        return this.timeToFinish;
     }
 }

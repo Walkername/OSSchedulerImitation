@@ -73,6 +73,9 @@ public class MainController {
     private Text durationFieldError;
 
     @FXML
+    private Text processorTimer;
+
+    @FXML
     private void openQueue(MouseEvent event) {
         VBox vbox = (VBox) event.getSource();
         switch (((Text) vbox.getChildren().getFirst()).getText()) {
@@ -85,8 +88,6 @@ public class MainController {
     }
 
     private void openQueueWindow(Queue<Task> tasks) {
-        System.out.println(tasks);
-
         VBox tasksBox = new VBox();
         tasksBox.setSpacing(5);
         int i = 0;
@@ -172,10 +173,12 @@ public class MainController {
                 // Running task in the processor
 
                 Task runningTask = operationSystem.getExecutionTask();
-                if (runningTask != null) {
-                    runningTaskTitle.setText(runningTask.toString());
+                if (runningTask != null && runningTask.getState() != State.SUSPENDED) {
+                    runningTaskTitle.setText(runningTask.getDescription());
+                    processorTimer.setText(operationSystem.getProcessorTimer().get() + "");
                 } else {
-                    runningTaskTitle.setText("No task");
+                    runningTaskTitle.setText("Context \nswitching");
+                    processorTimer.setText("X");
                 }
 
                 // Waiting tasks
