@@ -12,18 +12,14 @@ public class OperationSystem {
     Scheduler scheduler = new Scheduler(processor);
     TaskGenerator taskGenerator = new TaskGenerator(scheduler);
 
-    public void launchOperationSystem() {
-        scheduler.launchScheduleDaemon(1000);
+    public void launchOperationSystem(int interval) {
+        scheduler.launchProcessorAccessor(interval);
         taskGenerator.generate(0, 3000);
     }
 
     public void generateTasks(int number) {
         taskGenerator.generateOnce(number);
     }
-
-//    public Queue<Task> getSchedulerNewTasks() {
-//        return scheduler.getNewTasks();
-//    }
 
     public Map<Priority, Queue<Task>> getSchedulerReadyTasks() {
         return scheduler.getReadyTasks();

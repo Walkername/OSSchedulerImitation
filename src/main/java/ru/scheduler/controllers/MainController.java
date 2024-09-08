@@ -75,7 +75,7 @@ public class MainController {
     @FXML
     private void openQueue(MouseEvent event) {
         VBox vbox = (VBox) event.getSource();
-        switch (((Text) vbox.getChildren().get(0)).getText()) {
+        switch (((Text) vbox.getChildren().getFirst()).getText()) {
             case "ZERO" -> openQueueWindow(operationSystem.getSchedulerReadyTasks().get(Priority.ZERO));
             case "FIRST" -> openQueueWindow(operationSystem.getSchedulerReadyTasks().get(Priority.FIRST));
             case "SECOND" -> openQueueWindow(operationSystem.getSchedulerReadyTasks().get(Priority.SECOND));
@@ -122,7 +122,7 @@ public class MainController {
 
         Priority taskPriority = Priority.values()[Integer.parseInt(prioritiesList.getValue() + "")];
 
-        int taskDuration = 3;
+        int taskDuration;
 
         try {
             taskDuration = Integer.parseInt(durationField.getText());
@@ -154,51 +154,44 @@ public class MainController {
 
     @FXML
     private void launchOperationSystem() {
-        operationSystem.launchOperationSystem();
+        operationSystem.launchOperationSystem(1000);
 
-        Thread thread = new Thread(new Runnable() {
+        Thread thread = new Thread(() -> {
+            Runnable updater = () -> {
+                finishedTasksPanel.getChildren().clear();
+                Queue<Task> finishedTasks = operationSystem.getSchedulerFinishedTasks();
+                for (Task task : finishedTasks) {
+                    addToFinishedTasks(task);
+                }
+            };
 
-            @Override
-            public void run() {
-                Runnable updater = new Runnable() {
-                    @Override
-                    public void run() {
-                        finishedTasksPanel.getChildren().clear();
-                        Queue<Task> finishedTasks = operationSystem.getSchedulerFinishedTasks();
-                        for (Task task : finishedTasks) {
-                            addToFinishedTasks(task);
-                        }
-                    }
-                };
+            while (true) {
+                // Priority Queues
+                updateQueues();
 
-                while (true) {
-                    // Priority Queues
-                    updateQueues();
+                // Running task in the processor
 
-                    // Running task in the processor
+                Task runningTask = operationSystem.getExecutionTask();
+                if (runningTask != null) {
+                    runningTaskTitle.setText(runningTask.toString());
+                } else {
+                    runningTaskTitle.setText("No task");
+                }
 
-                    Task runningTask = operationSystem.getExecutionTask();
-                    if (runningTask != null) {
-                        runningTaskTitle.setText(runningTask.toString());
-                    } else {
-                        runningTaskTitle.setText("No task");
-                    }
+                // Waiting tasks
+                Map<Priority, Queue<Task>> waitingTasks = operationSystem.getSchedulerWaitingTasks();
+                waitingThird.setText(waitingTasks.get(Priority.THIRD).size() + "");
+                waitingSecond.setText(waitingTasks.get(Priority.SECOND).size() + "");
+                waitingFirst.setText(waitingTasks.get(Priority.FIRST).size() + "");
+                waitingZero.setText(waitingTasks.get(Priority.ZERO).size() + "");
 
-                    // Waiting tasks
-                    Map<Priority, Queue<Task>> waitingTasks = operationSystem.getSchedulerWaitingTasks();
-                    waitingThird.setText(waitingTasks.get(Priority.THIRD).size() + "");
-                    waitingSecond.setText(waitingTasks.get(Priority.SECOND).size() + "");
-                    waitingFirst.setText(waitingTasks.get(Priority.FIRST).size() + "");
-                    waitingZero.setText(waitingTasks.get(Priority.ZERO).size() + "");
+                // Finished tasks
+                Platform.runLater(updater);
 
-                    // Finished tasks
-                    Platform.runLater(updater);
-
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        throw new RuntimeException(e);
-                    }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
                 }
             }
         });

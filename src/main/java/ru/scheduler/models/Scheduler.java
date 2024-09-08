@@ -8,55 +8,29 @@ import java.util.*;
 
 public class Scheduler {
 
-    //private final Queue<Task> newTasks = new ConcurrentLinkedQueue<>();
-
     private final Processor processor;
+
     private final Queue<Task> finishedTasks = new LinkedList<>();
+
     private final Map<Priority, Queue<Task>> readyTasks = new HashMap<>() {{
         put(Priority.ZERO, new LinkedList<>());
         put(Priority.FIRST, new LinkedList<>());
         put(Priority.SECOND, new LinkedList<>());
         put(Priority.THIRD, new LinkedList<>());
     }};
+
     private final Map<Priority, Queue<Task>> waitingTasks = new HashMap<>() {{
         put(Priority.ZERO, new LinkedList<>());
         put(Priority.FIRST, new LinkedList<>());
         put(Priority.SECOND, new LinkedList<>());
         put(Priority.THIRD, new LinkedList<>());
     }};
-    private boolean isAllTasksExecuted = false;
 
     public Scheduler(Processor processor) {
         this.processor = processor;
     }
 
-    public void launchScheduleDaemon(int interval) {
-        //launchTaskMapper(interval);
-        launchProcessorAccessor(interval);
-    }
-
-//    private void launchTaskMapper(int interval) {
-//        Thread thread = new Thread(() -> {
-//            int newTasksCounter = 0;
-//            while (!isAllTasksExecuted) {
-//                if (newTasksCounter < newTasks.size()) {
-//                    while (!newTasks.isEmpty()) {
-//                        Task newTask = newTasks.poll();
-//                        newTask.setState(State.READY);
-//                        readyTasks.get(newTask.getPriority()).add(newTask);
-//                    }
-//                }
-//                try {
-//                    Thread.sleep(interval);
-//                } catch (InterruptedException e) {
-//                    throw new RuntimeException(e);
-//                }
-//            }
-//        });
-//        thread.start();
-//    }
-
-    private void launchProcessorAccessor(int interval) {
+    public void launchProcessorAccessor(int interval) {
         Thread thread = new Thread(() -> {
             while (true) {
                 try {
@@ -109,7 +83,6 @@ public class Scheduler {
                     }
                 }
             }
-            isAllTasksExecuted = true;
         });
         thread.setDaemon(true);
         thread.start();

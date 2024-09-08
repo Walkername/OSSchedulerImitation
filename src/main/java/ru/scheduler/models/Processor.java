@@ -11,31 +11,31 @@ public class Processor {
     private Thread executionThread;
 
     public void executeTask(Task task, int interval) {
+        executionThread = new Thread(() -> execute(task, interval));
+        executionThread.setDaemon(true);
+        executionThread.start();
+    }
 
-
+    public void execute(Task task, int interval) {
         executionTask = task;
         AtomicInteger initialDuration = new AtomicInteger(task.getDuration().get());
         AtomicInteger timeToFinish = new AtomicInteger(task.getDuration().get());
         task.setState(State.RUNNING);
-        executionThread = new Thread(() -> {
-            while (timeToFinish.get() != 0) {
-                try {
-                    Thread.sleep(interval);
-                } catch (InterruptedException e) {
-                    break;
-                }
-                if (task.getType() == TaskType.EXTENDED) {
-                    task.getDuration().decrementAndGet();
-                }
-                timeToFinish.decrementAndGet();
+        while (timeToFinish.get() != 0) {
+            try {
+                Thread.sleep(interval);
+            } catch (InterruptedException e) {
+                break;
             }
-            executionTask.setState(State.SUSPENDED);
-            executionTask.setDuration(initialDuration);
-            printProcessingState("Задача " + executionTask + " выполнена", interval);
-            //System.out.println("Задача " + executionTask + " выполнена");
-        });
-        executionThread.setDaemon(true);
-        executionThread.start();
+            if (task.getType() == TaskType.EXTENDED) {
+                task.getDuration().decrementAndGet();
+            }
+            timeToFinish.decrementAndGet();
+        }
+        executionTask.setState(State.SUSPENDED);
+        executionTask.setDuration(initialDuration);
+        printProcessingState("Задача " + executionTask + " выполнена", interval);
+        //System.out.println("Задача " + executionTask + " выполнена");
     }
 
     public void interruptCurrentTask(int interval) {
@@ -53,9 +53,4 @@ public class Processor {
     public Task getExecutionTask() {
         return executionTask;
     }
-
-    public void setExecutionTask(Task executionTask) {
-        this.executionTask = executionTask;
-    }
-
 }
