@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Text?>
+
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.shape.Line?>
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="ru.scheduler.controllers.MainController"
+      prefHeight="400.0" prefWidth="600.0"
+      style="-fx-padding: 10 10 10 10;"
+      spacing="30"
+>
+    <HBox alignment="BASELINE_CENTER" spacing="40">
+        <Button onAction="#createTask" text="Create Task"/>
+        <Button onAction="#generateTasks" text="Generate Tasks"/>
+        <Button onAction="#launchOperationSystem" text="Run Scheduler"/>
+    </HBox>
+
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <HBox alignment="BASELINE_CENTER">
+            <Text text="Name: "/>
+            <TextField fx:id="titleField" promptText="Task" text="Task"/>
+        </HBox>
+        <RadioButton fx:id="mainRadioBtn" text="Main" selected="true">
+            <toggleGroup>
+                <ToggleGroup fx:id="typeGroup"/>
+            </toggleGroup>
+        </RadioButton>
+        <RadioButton fx:id="extendedRadioBtn" text="Extended">
+            <toggleGroup>
+                <fx:reference source="typeGroup"/>
+            </toggleGroup>
+        </RadioButton>
+        <HBox alignment="BASELINE_CENTER">
+            <Text text="Priority: "/>
+            <ComboBox fx:id="prioritiesList" promptText="Priority: " value="0">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <Integer fx:value="0"/>
+                        <Integer fx:value="1"/>
+                        <Integer fx:value="2"/>
+                        <Integer fx:value="3"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+        </HBox>
+        <HBox alignment="BASELINE_CENTER" spacing="5">
+            <Text text="Duration: "/>
+            <TextField fx:id="durationField" text="3" prefColumnCount="3"/>
+            <Text fx:id="durationFieldError" style="-fx-fill: red"/>
+        </HBox>
+        <CheckBox fx:id="systemCheckBox" text="System">
+
+        </CheckBox>
+    </HBox>
+
+    <HBox style="-fx-border-color: black"/>
+
+    <VBox alignment="CENTER" spacing="20" style="-fx-padding: 10 10 10 10; -fx-border-color: black">
+        <Text style="-fx-font-size: 16;" textAlignment="CENTER" text="QUEUES"/>
+
+        <HBox spacing="100" alignment="BASELINE_CENTER">
+            <VBox onMouseClicked="#openQueue" alignment="CENTER" minWidth="80" style="-fx-padding: 10 10 10 10; -fx-border-color: black">
+                <Text textAlignment="CENTER" text="THIRD"/>
+                <Text textAlignment="CENTER" fx:id="thirdPriorityNumber" text="0"/>
+            </VBox>
+            <VBox onMouseClicked="#openQueue" alignment="CENTER" minWidth="80" style="-fx-padding: 10 10 10 10; -fx-border-color: black">
+                <Text textAlignment="CENTER" text="SECOND"/>
+                <Text textAlignment="CENTER" fx:id="secondPriorityNumber" text="0"/>
+            </VBox>
+            <VBox onMouseClicked="#openQueue" alignment="CENTER" minWidth="80" style="-fx-padding: 10 10 10 10; -fx-border-color: black">
+                <Text textAlignment="CENTER" text="FIRST"/>
+                <Text textAlignment="CENTER" fx:id="firstPriorityNumber" text="0"/>
+            </VBox>
+            <VBox onMouseClicked="#openQueue" alignment="CENTER" minWidth="80" style="-fx-padding: 10 10 10 10; -fx-border-color: black">
+                <Text textAlignment="CENTER" text="ZERO"/>
+                <Text textAlignment="CENTER" fx:id="zeroPriorityNumber" text="0"/>
+            </VBox>
+        </HBox>
+    </VBox>
+
+    <HBox alignment="CENTER" spacing="100" style="-fx-padding: 10 10 10 10; -fx-border-color: black">
+        <VBox alignment="CENTER">
+            <Text text="Timer"/>
+            <VBox alignment="CENTER" style="-fx-border-color: black" prefWidth="100" prefHeight="100">
+                <Text fx:id="processorTimer" text="X" style="-fx-font-size: 30"/>
+            </VBox>
+        </VBox>
+
+        <VBox alignment="CENTER">
+            <Text text="Processor"/>
+            <HBox alignment="CENTER" style="-fx-padding: 10 10 10 10; -fx-border-color: black;" prefWidth="100"
+                  prefHeight="100">
+                <Text fx:id="runningTaskTitle" text="No task"/>
+            </HBox>
+        </VBox>
+
+        <VBox alignment="CENTER">
+            <Text text="Waiting Task"/>
+            <HBox alignment="CENTER" style="-fx-padding: 10 10 10 10; -fx-border-color: black;" prefWidth="100"
+                  prefHeight="100">
+                <Text fx:id="waitingTaskTitle" text="No task"/>
+            </HBox>
+        </VBox>
+    </HBox>
+
+    <VBox>
+        <Text text="FINISHED TASKS"/>
+        <HBox alignment="CENTER">
+            <ScrollPane HBox.hgrow="ALWAYS">
+                <VBox fx:id="finishedTasksPanel" style="-fx-padding: 5 5 5 5;" spacing="5">
+
+                </VBox>
+            </ScrollPane>
+        </HBox>
+    </VBox>
+
+</VBox>
+
