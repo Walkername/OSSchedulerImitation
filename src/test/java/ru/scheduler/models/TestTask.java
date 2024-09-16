@@ -6,7 +6,6 @@ import ru.scheduler.enums.Priority;
 import ru.scheduler.enums.State;
 import ru.scheduler.enums.TaskType;
 
-import java.util.Iterator;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TestTask {
@@ -34,6 +33,10 @@ public class TestTask {
         // Duration setter
         task.setDuration(new AtomicInteger(25));
         Assertions.assertEquals(25, task.getDuration().intValue());
+
+        // System setter
+        task.setSystem(true);
+        Assertions.assertTrue(task.isSystem());
 
         // Description getter
         Assertions.assertNotNull(task.getDescription());

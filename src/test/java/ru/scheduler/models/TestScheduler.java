@@ -16,7 +16,7 @@ public class TestScheduler {
         int interval = 50;
         int taskDuration = 4;
         Task task1 = new Task("", TaskType.EXTENDED, State.READY, Priority.SECOND, taskDuration, false);
-        Task task2 = new Task("", TaskType.EXTENDED, State.READY, Priority.THIRD, taskDuration, false);
+        Task task2 = new Task("", TaskType.EXTENDED, State.READY, Priority.THIRD, taskDuration, true);
 
         scheduler.getReadyTasks().get(task1.getPriority()).add(task1);
         scheduler.launchProcessorAccessor(interval);
@@ -31,7 +31,7 @@ public class TestScheduler {
         // Task2
         Assertions.assertEquals(State.RUNNING, task2.getState());
         //Task1
-        //Assertions.assertEquals(State.WAITING, scheduler.getWaitingTask().get(Priority.SECOND).peek().getState());
+        Assertions.assertEquals(scheduler.getWaitingTask(), task1);
 
         while (task2.getState() != State.SUSPENDED) {
             Thread.sleep(1);

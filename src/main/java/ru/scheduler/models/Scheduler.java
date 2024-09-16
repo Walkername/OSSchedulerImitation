@@ -19,7 +19,7 @@ public class Scheduler {
         put(Priority.THIRD, new LinkedList<>());
     }};
 
-    private Task waitingTask;
+    private Task waitingTask = null;
 
 //    private final Map<Priority, Queue<Task>> waitingTasks = new HashMap<>() {{
 //        put(Priority.ZERO, new LinkedList<>());
@@ -30,6 +30,16 @@ public class Scheduler {
 
     public Scheduler(Processor processor) {
         this.processor = processor;
+    }
+
+    private void releaseWaitingTask(Task currentTask) {
+        if (currentTask == null || !currentTask.isSystem()) {
+            if (waitingTask != null) {
+                Task task = waitingTask;
+                readyTasks.get(task.getPriority()).add(task);
+                waitingTask = null;
+            }
+        }
     }
 
     public void launchProcessorAccessor(int interval) {
@@ -44,42 +54,38 @@ public class Scheduler {
                 Task currentTask = processor.getExecutionTask();
                 Task toExecute = decideWhichTaskWillExecuted();
 
+                releaseWaitingTask(currentTask);
+
                 if (toExecute == null) {
-                    finishedTasks.add(processor.getExecutionTask());
-                    break;
+                    if (currentTask != null && currentTask.getState() == State.SUSPENDED) {
+                        finishedTasks.add(processor.getExecutionTask());
+                        processor.setExecutionTask(null);
+                        //break;
+                    }
+                    continue;
                 }
 
                 if (currentTask == null) {
-                    removeTaskFromQueues(toExecute);
+                    removeTaskFromQueues(toExecute); // remove task from ready queues
                     processor.executeTask(toExecute, interval);
                 } else if (currentTask.getState() == State.SUSPENDED) {
                     addToFinishedTasks(currentTask, toExecute, interval);
-
                 }
                 // It's moment where scheduler can change execution task in processor
                 else if (currentTask.getState() == State.RUNNING) {
 
-                    // If current task is EXTENDED
-                    // then scheduler can move this task to WAITING tasks in some case
-                    if (currentTask.getType() == TaskType.EXTENDED) {
-                        // If toExecute task is system and extended current is not
-                        // then scheduler have to start toExecute
-                        // and currentTask will be moved to WAITING STATE
-                        // When toExecute will be executed, currentTask will be moved in READY state
-                        if (toExecute.isSystem() && !currentTask.isSystem()) {
-                            addToWaitingTasks(currentTask, toExecute, interval);
-                        }
-                        // if toExecute and current are both system
-                        // then scheduler consider only priority
-                        else if (toExecute.getPriority().ordinal() > currentTask.getPriority().ordinal()) {
-                            addToReadyTasks(currentTask, toExecute, interval);
-                        }
-                    }
-                    // If current task is MAIN
-                    else if (toExecute.getPriority().ordinal() > currentTask.getPriority().ordinal()) {
+                    if (currentTask.getType() == TaskType.EXTENDED
+                            && !currentTask.isSystem()
+                            && toExecute.isSystem()
+                    ) {
+                        addToWaitingTasks(currentTask, toExecute, interval);
+
+                    } else if (toExecute.getPriority().ordinal() > currentTask.getPriority().ordinal()) {
                         addToReadyTasks(currentTask, toExecute, interval);
                     }
+
                 }
+
             }
         });
         thread.setDaemon(true);
@@ -87,61 +93,67 @@ public class Scheduler {
     }
 
     private void addToFinishedTasks(Task currentTask, Task toExecute, int interval) {
-        finishedTasks.add(currentTask);
+        try {
+            finishedTasks.add(currentTask);
 
-        Task task = waitingTask;
-        if (waitingTask != null) {
-            task.setState(State.READY);
-            readyTasks.get(task.getPriority()).add(task);
-            waitingTask = null;
+            removeTaskFromQueues(toExecute);
+            processor.executeTask(toExecute, interval);
+        } catch (NullPointerException ignored) {
         }
-
-        removeTaskFromQueues(toExecute);
-        processor.executeTask(toExecute, interval);
     }
 
     private void addToWaitingTasks(Task currentTask, Task toExecute, int interval) {
-        processor.interruptCurrentTask();
-        removeTaskFromQueues(toExecute);
-        processor.executeTask(toExecute, interval);
-        currentTask.setState(State.WAITING);
-        //waitingTasks.get(currentTask.getPriority()).add(currentTask);
-        waitingTask = currentTask;
+        try {
+            processor.interruptCurrentTask();
+            currentTask.setState(State.WAITING);
+            waitingTask = currentTask;
+
+            removeTaskFromQueues(toExecute);
+            processor.executeTask(toExecute, interval);
+        } catch (NullPointerException ignored) {
+        }
     }
 
     private void addToReadyTasks(Task currentTask, Task toExecute, int interval) {
-        processor.interruptCurrentTask();
-        removeTaskFromQueues(toExecute);
-        processor.executeTask(toExecute, interval);
-        currentTask.setState(State.READY);
-        readyTasks.get(currentTask.getPriority()).add(currentTask);
+        try {
+            processor.interruptCurrentTask();
+            removeTaskFromQueues(toExecute);
+            processor.executeTask(toExecute, interval);
+            currentTask.setState(State.READY);
+            readyTasks.get(currentTask.getPriority()).add(currentTask);
+        } catch (NullPointerException ignored) {
+
+        }
     }
 
     private Task decideWhichTaskWillExecuted() {
         Task maxPriorityTask = null;
         for (Priority priority : Priority.values()) {
-            for (Task task : readyTasks.get(priority)) {
-                if (task.isSystem()) {
-                    maxPriorityTask = task;
-                    return maxPriorityTask;
-                }
-                maxPriorityTask = task;
+            Task readyTask = readyTasks.get(priority).peek();
+            if (readyTask != null) {
+                maxPriorityTask = readyTask;
             }
         }
         return maxPriorityTask;
     }
 
     private void removeTaskFromQueues(Task task) {
-        if (task.getState() == State.READY) {
+        try {
             readyTasks.get(task.getPriority()).remove();
-        } else {
-            throw new RuntimeException();
+        } catch (NullPointerException ignored) {
+
         }
     }
 
-    public Map<Priority, Queue<Task>> getReadyTasks() { return readyTasks; }
+    public Map<Priority, Queue<Task>> getReadyTasks() {
+        return readyTasks;
+    }
 
-    public Queue<Task> getFinishedTasks() { return finishedTasks; }
+    public Queue<Task> getFinishedTasks() {
+        return finishedTasks;
+    }
 
-    public Task getWaitingTask() { return waitingTask; }
+    public Task getWaitingTask() {
+        return waitingTask;
+    }
 }

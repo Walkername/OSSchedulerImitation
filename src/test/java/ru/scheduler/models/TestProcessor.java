@@ -13,13 +13,13 @@ public class TestProcessor {
         Processor processor = new Processor();
 
         int duration = 4;
-        //Task task = new Task("", TaskType.MAIN, State.READY, Priority.THIRD, duration);
-        //processor.execute(task, 0);
-//        Assertions.assertEquals(State.SUSPENDED, task.getState());
-//
-//        //Task task1 = new Task("", TaskType.EXTENDED, State.READY, Priority.THIRD, duration);
-//        //processor.execute(task1, 0);
-//        Assertions.assertEquals(State.SUSPENDED, task1.getState());
+        Task task = new Task("", TaskType.MAIN, State.READY, Priority.THIRD, duration, false);
+        processor.execute(task, 0);
+        Assertions.assertEquals(State.SUSPENDED, task.getState());
+
+        Task task1 = new Task("", TaskType.EXTENDED, State.READY, Priority.THIRD, duration, false);
+        processor.execute(task1, 0);
+        Assertions.assertEquals(State.SUSPENDED, task1.getState());
     }
 
     @Test
@@ -28,14 +28,14 @@ public class TestProcessor {
 
         int interval = 10;
         int duration = 4;
-//        Task task = new Task("", TaskType.MAIN, State.READY, Priority.THIRD, duration);
-//        processor.executeTask(task, interval);
-//
-//        while (task.getState() != State.RUNNING) {
-//            Thread.sleep(interval);
-//        }
-//        Assertions.assertEquals(task, processor.getExecutionTask());
-//        Assertions.assertEquals(State.RUNNING, processor.getExecutionTask().getState());
+        Task task = new Task("", TaskType.MAIN, State.READY, Priority.THIRD, duration, false);
+        processor.executeTask(task, interval);
+
+        while (task.getState() != State.RUNNING) {
+            Thread.sleep(interval);
+        }
+        Assertions.assertEquals(task, processor.getExecutionTask());
+        Assertions.assertEquals(State.RUNNING, processor.getExecutionTask().getState());
     }
 
     @Test

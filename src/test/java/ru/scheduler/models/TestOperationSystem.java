@@ -32,7 +32,7 @@ public class TestOperationSystem {
         Thread.sleep(interval * 10);
 
         Assertions.assertFalse(operationSystem.getSchedulerFinishedTasks().isEmpty());
-        Assertions.assertNotNull(operationSystem.getExecutionTask());
+        Assertions.assertNull(operationSystem.getExecutionTask());
         Assertions.assertEquals(0, operationSystem.getProcessorTimer().get());
     }
 

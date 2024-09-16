@@ -17,6 +17,9 @@ public class Processor {
     }
 
     public void execute(Task task, int interval) {
+        if (task == null) {
+            return;
+        }
         executionTask = task;
         timeToFinish = new AtomicInteger(task.getDuration().get());
         task.setState(State.RUNNING);
@@ -24,7 +27,8 @@ public class Processor {
             try {
                 Thread.sleep(interval);
             } catch (InterruptedException e) {
-                break;
+                // break;
+                return;
             }
             timeToFinish.decrementAndGet();
         }
@@ -37,6 +41,10 @@ public class Processor {
 
     public Task getExecutionTask() {
         return this.executionTask;
+    }
+
+    public void setExecutionTask(Task task) {
+        this.executionTask = task;
     }
 
     public AtomicInteger getTimeToFinish() {

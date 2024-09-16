@@ -100,12 +100,13 @@ public class Task {
     }
 
     public String getDescription() {
+        String isSystem = system ? "System" : "NotSystem";
         return this.name + "\n"
                 + this.type + "\n"
                 + this.state + "\n"
                 + this.priority + "\n"
                 + this.duration + "\n"
-                + this.system;
+                + isSystem;
     }
 
     @Override

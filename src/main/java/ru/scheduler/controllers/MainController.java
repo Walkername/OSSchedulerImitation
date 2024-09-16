@@ -19,7 +19,9 @@ import java.util.Queue;
 
 public class MainController {
 
-    private final OperationSystem operationSystem = new OperationSystem();
+    private OperationSystem operationSystem;
+
+    private static int customTaskNumber = 0;
 
     @FXML
     private Text thirdPriorityNumber;
@@ -82,6 +84,11 @@ public class MainController {
     private Text processorTimer;
 
     @FXML
+    public void initialize() {
+        operationSystem = new OperationSystem();
+    }
+
+    @FXML
     private void openQueue(MouseEvent event) {
         VBox vbox = (VBox) event.getSource();
         switch (((Text) vbox.getChildren().getFirst()).getText()) {
@@ -116,7 +123,8 @@ public class MainController {
 
     @FXML
     private void createTask() {
-        String taskTitle = titleField.getText();
+        String taskTitle = titleField.getText() + "#" + customTaskNumber;
+        customTaskNumber++;
 
         TaskType taskType;
         if ((typeGroup.getSelectedToggle()).equals(mainRadioBtn)) {
@@ -168,8 +176,11 @@ public class MainController {
             Runnable updater = () -> {
                 finishedTasksPanel.getChildren().clear();
                 Queue<Task> finishedTasks = operationSystem.getSchedulerFinishedTasks();
+                //System.out.println(finishedTasks);
                 for (Task task : finishedTasks) {
-                    addToFinishedTasks(task);
+                    if (task != null) {
+                        addToFinishedTasks(task);
+                    }
                 }
             };
 
